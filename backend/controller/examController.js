@@ -44,7 +44,8 @@ const createNewExams = async (req, res) => {
 
 const getAllExams = async (req, res) => {
   try {
-    const getExams = await Exams.find();
+    const { sessionName } = req.query;
+    const getExams = await Exams.find({ sessionName });
     res.status(200).json(getExams);
   } catch (error) {
     console.error(error);

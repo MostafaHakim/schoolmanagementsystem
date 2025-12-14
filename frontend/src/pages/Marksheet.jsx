@@ -260,7 +260,7 @@ const Marksheet = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${BASE_URL}/exams`)
+    fetch(`${BASE_URL}/exams?sessionName=${sessionName}`)
       .then((res) => res.json())
       .then((data) => {
         setExams(data);
