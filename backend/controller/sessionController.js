@@ -50,6 +50,9 @@ const startNewSession = async (req, res) => {
 const getAllSession = async (req, res) => {
   try {
     const getSession = await Session.find();
+    if (!getSession) {
+      res.status(404).json({ massage: "not found" });
+    }
     res.status(200).json(getSession);
   } catch (error) {
     console.error(error);
