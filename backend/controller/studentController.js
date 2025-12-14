@@ -4,47 +4,71 @@ const Subjects = require("../model/subjectModel");
 
 const createNewStudent = async (req, res) => {
   try {
-    const {
-      studentName,
+    const { studentName, studentClass, studentSessions, studentGroup } =
+      req.body;
+
+    // 🔹 1. AUTO ROLL (class + session wise)
+    const lastStudent = await Students.findOne({
       studentClass,
       studentSessions,
-      studentRoll,
-      studentGroup,
-    } = req.body;
-    console.log(studentSessions);
-    // 🔹 1. Get subjects for this class
-    const classSubjects = await Subjects.find({ subjectClass: studentClass });
+    })
+      .sort({ studentRoll: -1 })
+      .select("studentRoll");
 
-    // Map subjects to exam structure (marks empty for now)
+    const nextRoll = lastStudent ? lastStudent.studentRoll + 1 : 1;
+
+    // 🔹 2. Get subjects for this class
+    const classSubjects = await Subjects.find({
+      subjectClass: studentClass,
+    });
+
     const subjectsForExams = classSubjects.map((subj) => ({
       subjectName: subj.subjectName,
-      marks: [], // empty initially
+      marks: [], // initially empty
     }));
 
-    // 🔹 2. Get exams for this session
-    const examsForSession = await Exams.find({ sessionName: studentSessions });
+    // 🔹 3. Get exams for this session
+    const examsForSession = await Exams.find({
+      sessionName: studentSessions,
+    });
 
-    // Map exams with subjects
     const studentExams = examsForSession.map((exam) => ({
       examName: exam.examName,
-      subjects: subjectsForExams, // attach class subjects
+      sessionName: studentSessions, // 🔥 FIX HERE
+      subjects: subjectsForExams,
     }));
 
-    // 🔹 3. Create student
+    // 🔹 4. Create student
     const newStudent = new Students({
       studentName,
       studentClass,
       studentSessions,
-      studentRoll,
+      studentRoll: nextRoll, // 🔥 AUTO
       studentGroup: studentGroup || "general",
-      studentExams, // attach exams with subjects
+      studentExams,
     });
 
     const savedStudent = await newStudent.save();
-    res.status(201).json({ success: true, student: savedStudent });
+
+    res.status(201).json({
+      success: true,
+      student: savedStudent,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: error.message });
+
+    // duplicate roll safety
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "Duplicate roll detected. Try again.",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 };
 
@@ -89,9 +113,16 @@ const deleteStudent = async (req, res) => {
 
 const updateBatchMarks = async (req, res) => {
   try {
-    const { studentClass, examName, subjectName, marksList } = req.body;
+    const { studentClass, sessionName, examName, subjectName, marksList } =
+      req.body;
 
-    if (!studentClass || !examName || !subjectName || !marksList?.length) {
+    if (
+      !studentClass ||
+      !sessionName ||
+      !examName ||
+      !subjectName ||
+      !marksList?.length
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -101,6 +132,7 @@ const updateBatchMarks = async (req, res) => {
       const student = await Students.findOne({
         studentClass,
         studentRoll,
+        studentSessions: sessionName,
       });
 
       if (!student) {
@@ -108,7 +140,9 @@ const updateBatchMarks = async (req, res) => {
         continue;
       }
 
-      const exam = student.studentExams.find((e) => e.examName === examName);
+      const exam = student.studentExams.find(
+        (e) => e.examName === examName && e.sessionName === sessionName
+      );
 
       if (!exam) {
         results.push({ studentRoll, status: "Exam not found" });
@@ -122,38 +156,37 @@ const updateBatchMarks = async (req, res) => {
         continue;
       }
 
-      // ✅ ONLY UPDATE MARKS
+      // ✅ Update marks
       subject.marks = {
+        totalMark: 100,
         passMark: 33,
         gotMarks: Number(gotMarks),
       };
 
       await student.save();
 
-      results.push({
-        studentRoll,
-        status: "Marks updated",
-      });
+      results.push({ studentRoll, status: "Marks updated" });
     }
 
-    res.json({
-      message: "Marks updated successfully",
-      results,
-    });
+    res.json({ message: "Marks updated successfully", results });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
 
 const getExistingMarks = async (req, res) => {
   try {
-    const { studentClass, examName, subjectName } = req.query;
+    const { studentClass, examName, subjectName, sessionName } = req.query;
 
-    if (!studentClass || !examName || !subjectName) {
+    if (!studentClass || !examName || !subjectName || !sessionName) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const students = await Students.find({ studentClass });
+    const students = await Students.find({
+      studentClass,
+      studentSessions: sessionName,
+    });
 
     const marksMap = {};
     // { roll: gotMarks }

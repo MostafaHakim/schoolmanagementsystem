@@ -25,6 +25,19 @@ const getAllClasses = async (req, res) => {
   }
 };
 
+const getAllClassesBySession = async (req, res) => {
+  try {
+    const { sessionName } = req.params;
+    const getClass = await Classes.find({ sessionName });
+    if (!getClass) {
+      res.status(404).json({ massage: "not found" });
+    }
+    res.status(200).json(getClass);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const deleteClass = async (req, res) => {
   try {
     const { id } = req.params;
@@ -44,4 +57,9 @@ const deleteClass = async (req, res) => {
   }
 };
 
-module.exports = { getAllClasses, createNewClass, deleteClass };
+module.exports = {
+  getAllClasses,
+  createNewClass,
+  deleteClass,
+  getAllClassesBySession,
+};

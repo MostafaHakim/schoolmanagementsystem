@@ -217,6 +217,7 @@
 
 // export default Marksheet;
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const TOTAL_MARK = 100;
 const PASS_MARK = 33;
@@ -237,7 +238,7 @@ const Marksheet = () => {
   const [saveLoading, setSaveLoading] = useState(false);
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+  const { sessionName } = useParams();
   const getGrade = (marks) => {
     if (marks >= 80) return { grade: "A+", color: "text-green-600" };
     if (marks >= 70) return { grade: "A", color: "text-green-500" };
@@ -301,7 +302,7 @@ const Marksheet = () => {
       setStudents(studentData);
 
       const marksRes = await fetch(
-        `${BASE_URL}/students/existing-marks?studentClass=${selectedClass}&examName=${selectedExam}&subjectName=${selectedSubject}`
+        `${BASE_URL}/students/existing-marks?studentClass=${selectedClass}&examName=${selectedExam}&subjectName=${selectedSubject}&sessionName=${sessionName}`
       );
       const marksData = await marksRes.json();
 
@@ -309,7 +310,7 @@ const Marksheet = () => {
       studentData.forEach((s) => {
         finalMarks[s.studentRoll] = marksData[s.studentRoll] ?? "";
       });
-
+      console.log(finalMarks);
       setMarks(finalMarks);
     };
 
@@ -326,6 +327,7 @@ const Marksheet = () => {
       studentClass: selectedClass,
       examName: selectedExam,
       subjectName: selectedSubject,
+      sessionName,
       marksList,
     };
 

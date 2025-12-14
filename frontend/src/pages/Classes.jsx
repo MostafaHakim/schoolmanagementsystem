@@ -11,7 +11,7 @@ const Classes = () => {
   }, []);
 
   const fetchClass = async () => {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/classes`)
+    await fetch(`${import.meta.env.VITE_BASE_URL}/classes/${sessionName}`)
       .then((res) => res.json())
       .then((data) => setClasses(data));
   };
@@ -33,7 +33,7 @@ const Classes = () => {
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/classes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ className }),
+        body: JSON.stringify({ className, sessionName }),
       });
       setClassName("");
       if (!response.ok) throw new Error("Failed to add class");

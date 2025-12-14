@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const subjectSchema = new mongoose.Schema({
   subjectName: { type: String, required: true },
   marks: {
+    totalMark: Number,
     passMark: Number,
     gotMarks: Number,
   },
@@ -13,6 +14,7 @@ const subjectSchema = new mongoose.Schema({
 // Exam Schema (student এর exams)
 const studentExamSchema = new mongoose.Schema({
   examName: { type: String, required: true },
+  sessionName: { type: String, required: true },
   subjects: [subjectSchema], // array of subjects
 });
 
@@ -26,4 +28,8 @@ const studentSchema = new mongoose.Schema({
   studentGroup: { type: String, default: "general" },
 });
 
+studentSchema.index(
+  { studentClass: 1, studentSessions: 1, studentRoll: 1 },
+  { unique: true }
+);
 module.exports = studentSchema;
