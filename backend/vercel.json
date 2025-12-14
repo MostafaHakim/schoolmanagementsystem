@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.js",
+      "src": "server.js",
       "use": "@vercel/node",
       "config": {
         "memory": 512,
@@ -13,14 +13,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/app.js"
+      "dest": "/server.js"
     }
-  ],
-
-  "functions": {
-    "api/**/*.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  }
+  ]
 }
