@@ -1,5 +1,6 @@
 // src/components/ClassWiseMarksheet.jsx
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -12,7 +13,7 @@ const ClassWiseMarksheet = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedStudentDetails, setSelectedStudentDetails] = useState(null);
-
+  const { sessionName } = useParams();
   // সব এক্সাম fetch
   useEffect(() => {
     setLoading(true);
