@@ -16,6 +16,9 @@ const createNewClass = async (req, res) => {
 const getAllClasses = async (req, res) => {
   try {
     const getClass = await Classes.find();
+    if (!getClass) {
+      res.status(404).json({ massage: "not found" });
+    }
     res.status(200).json(getClass);
   } catch (error) {
     console.error(error);
