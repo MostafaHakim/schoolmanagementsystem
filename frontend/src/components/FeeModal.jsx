@@ -7,17 +7,11 @@ const FeeModal = ({
   formData,
   setFormData,
   onSubmit,
+  errorMsg,
+  editingFee,
   classes,
 }) => {
   if (!open) return null;
-
-  const handleClassSelect = (e) => {
-    const value = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value
-    );
-    setFormData({ ...formData, applicableClasses: value });
-  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
@@ -30,52 +24,43 @@ const FeeModal = ({
         </button>
 
         <h2 className="text-2xl font-semibold mb-4">
-          {formData._id ? "Edit Fee" : "Add Fee"}
+          {editingFee ? "Edit Fee" : "Add Fee"}
         </h2>
 
         <input
           type="text"
           placeholder="Fee Name"
-          value={formData.feeName}
+          value={formData.feesName}
           onChange={(e) =>
-            setFormData({ ...formData, feeName: e.target.value })
+            setFormData({ ...formData, feesName: e.target.value })
           }
           className="w-full border p-3 rounded-lg mb-3 outline-none focus:border-blue-500 transition"
         />
-
         <input
-          type="number"
-          placeholder="Amount"
-          value={formData.feeAmount}
+          type="text"
+          placeholder="Fee Amount"
+          value={formData.feesAmount}
           onChange={(e) =>
-            setFormData({ ...formData, feeAmount: e.target.value })
+            setFormData({ ...formData, feesAmount: e.target.value })
           }
           className="w-full border p-3 rounded-lg mb-3 outline-none focus:border-blue-500 transition"
         />
-
         <select
-          value={formData.feeType}
+          value={formData.feesClass}
           onChange={(e) =>
-            setFormData({ ...formData, feeType: e.target.value })
+            setFormData({ ...formData, feesClass: e.target.value })
           }
           className="w-full border p-3 rounded-lg mb-3 outline-none focus:border-blue-500 transition"
         >
-          <option value="Compulsory">Compulsory</option>
-          <option value="Optional">Optional</option>
-        </select>
-
-        <select
-          multiple
-          value={formData.applicableClasses}
-          onChange={handleClassSelect}
-          className="w-full border p-3 rounded-lg mb-5 outline-none focus:border-blue-500 transition h-28"
-        >
-          {classes.map((c) => (
-            <option key={c._id} value={c.className}>
-              {c.className}
+          <option value="">Select Class</option>
+          {classes.map((cls) => (
+            <option key={cls._id} value={cls.className}>
+              {cls.className}
             </option>
           ))}
         </select>
+
+        {errorMsg && <p className="text-red-500 mb-2">{errorMsg}</p>}
 
         <div className="flex justify-end gap-3">
           <button
@@ -88,7 +73,7 @@ const FeeModal = ({
             onClick={onSubmit}
             className="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition shadow-md"
           >
-            {formData._id ? "Update" : "Add"}
+            {editingFee ? "Update" : "Add"}
           </button>
         </div>
       </div>

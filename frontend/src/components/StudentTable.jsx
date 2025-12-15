@@ -16,7 +16,6 @@ const StudentTable = ({ students }) => {
             <tr
               key={student.id}
               className="hover:bg-gray-50 cursor-pointer transition"
-              onClick={() => navigate(`/student/${student.id}`)}
             >
               <td className="py-2 px-4 border-b">{student.studentRoll}</td>
               <td className="py-2 px-4 border-b">{student.studentName}</td>

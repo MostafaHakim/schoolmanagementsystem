@@ -39,7 +39,7 @@ function App() {
       </Route>
 
       {/* Individual student profile */}
-      <Route path="student/:studentId" element={<StudentProfile />} />
+      <Route path="/students/profile/:id" element={<StudentProfile />} />
     </Routes>
   );
 }

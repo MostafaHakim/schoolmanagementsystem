@@ -17,6 +17,26 @@ const studentExamSchema = new mongoose.Schema({
   sessionName: { type: String, required: true },
   subjects: [subjectSchema], // array of subjects
 });
+const allFees = new mongoose.Schema({
+  feesName: { type: String, required: true },
+  feeAmount: { type: String, required: true },
+
+  status: {
+    type: String,
+    enum: ["due", "paid"],
+    default: "due",
+  },
+
+  paidDate: {
+    type: Date,
+    default: null,
+  },
+
+  receiptNo: {
+    type: String,
+    default: null,
+  },
+});
 
 // Main Student Schema
 const studentSchema = new mongoose.Schema({
@@ -24,6 +44,7 @@ const studentSchema = new mongoose.Schema({
   studentSessions: { type: String, required: true },
   studentClass: { type: String, required: true },
   studentRoll: { type: Number, required: true },
+  studentFees: [allFees],
   studentExams: [studentExamSchema], // array of exams
   studentGroup: { type: String, default: "general" },
 });

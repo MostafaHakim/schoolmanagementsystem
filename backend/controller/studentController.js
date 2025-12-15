@@ -1,13 +1,84 @@
 const Students = require("../model/studentModel");
 const Exams = require("../model/examModel");
 const Subjects = require("../model/subjectModel");
+const Fees = require("../model/feesModel");
+const { generateReceiptNo } = require("../utils/generateReceipt");
+// const createNewStudent = async (req, res) => {
+//   try {
+//     const { studentName, studentClass, studentSessions, studentGroup } =
+//       req.body;
+
+//     // 🔹 1. AUTO ROLL (class + session wise)
+//     const lastStudent = await Students.findOne({
+//       studentClass,
+//       studentSessions,
+//     })
+//       .sort({ studentRoll: -1 })
+//       .select("studentRoll");
+
+//     const nextRoll = lastStudent ? lastStudent.studentRoll + 1 : 1;
+
+//     // 🔹 2. Get subjects for this class
+//     const classSubjects = await Subjects.find({
+//       subjectClass: studentClass,
+//     });
+
+//     const subjectsForExams = classSubjects.map((subj) => ({
+//       subjectName: subj.subjectName,
+//       marks: [], // initially empty
+//     }));
+
+//     // 🔹 3. Get exams for this session
+//     const examsForSession = await Exams.find({
+//       sessionName: studentSessions,
+//     });
+
+//     const studentExams = examsForSession.map((exam) => ({
+//       examName: exam.examName,
+//       sessionName: studentSessions, // 🔥 FIX HERE
+//       subjects: subjectsForExams,
+//     }));
+
+//     // 🔹 4. Create student
+//     const newStudent = new Students({
+//       studentName,
+//       studentClass,
+//       studentSessions,
+//       studentRoll: nextRoll, // 🔥 AUTO
+//       studentGroup: studentGroup || "general",
+//       studentExams,
+//     });
+
+//     const savedStudent = await newStudent.save();
+
+//     res.status(201).json({
+//       success: true,
+//       student: savedStudent,
+//     });
+//   } catch (error) {
+//     console.error(error);
+
+//     // duplicate roll safety
+//     if (error.code === 11000) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Duplicate roll detected. Try again.",
+//       });
+//     }
+
+//     res.status(500).json({
+//       success: false,
+//       error: error.message,
+//     });
+//   }
+// };
 
 const createNewStudent = async (req, res) => {
   try {
     const { studentName, studentClass, studentSessions, studentGroup } =
       req.body;
 
-    // 🔹 1. AUTO ROLL (class + session wise)
+    // 🔹 1. AUTO ROLL
     const lastStudent = await Students.findOne({
       studentClass,
       studentSessions,
@@ -18,9 +89,7 @@ const createNewStudent = async (req, res) => {
     const nextRoll = lastStudent ? lastStudent.studentRoll + 1 : 1;
 
     // 🔹 2. Get subjects for this class
-    const classSubjects = await Subjects.find({
-      subjectClass: studentClass,
-    });
+    const classSubjects = await Subjects.find({ subjectClass: studentClass });
 
     const subjectsForExams = classSubjects.map((subj) => ({
       subjectName: subj.subjectName,
@@ -28,24 +97,35 @@ const createNewStudent = async (req, res) => {
     }));
 
     // 🔹 3. Get exams for this session
-    const examsForSession = await Exams.find({
-      sessionName: studentSessions,
-    });
+    const examsForSession = await Exams.find({ sessionName: studentSessions });
 
     const studentExams = examsForSession.map((exam) => ({
       examName: exam.examName,
-      sessionName: studentSessions, // 🔥 FIX HERE
+      sessionName: studentSessions,
       subjects: subjectsForExams,
     }));
 
-    // 🔹 4. Create student
+    // 🔹 4. Get fees for this student
+    const applicableFees = await Fees.find({
+      $or: [{ feesClass: studentClass }, { feesClass: "ALL" }],
+    });
+
+    const studentFees = applicableFees.map((fee) => ({
+      feesName: fee.feesName,
+      feeAmount: fee.feesAmount,
+      status: "due", // default
+      paidDate: null, // default
+    }));
+
+    // 🔹 5. Create student
     const newStudent = new Students({
       studentName,
       studentClass,
       studentSessions,
-      studentRoll: nextRoll, // 🔥 AUTO
+      studentRoll: nextRoll,
       studentGroup: studentGroup || "general",
       studentExams,
+      studentFees, // add fees here
     });
 
     const savedStudent = await newStudent.save();
@@ -57,7 +137,6 @@ const createNewStudent = async (req, res) => {
   } catch (error) {
     console.error(error);
 
-    // duplicate roll safety
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -87,6 +166,20 @@ const getStudentsByClassName = async (req, res) => {
     res.status(200).json(getStudent);
   } catch (error) {
     console.error(error);
+  }
+};
+const getStudentsById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const student = await Students.findById(id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.status(200).json(student);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -209,6 +302,39 @@ const getExistingMarks = async (req, res) => {
   }
 };
 
+const updatePayment = async (req, res) => {
+  try {
+    const { studentId, feeId } = req.params;
+
+    const student = await Students.findById(studentId);
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    // 🔥 fee find (subdocument)
+    const fee = student.studentFees.id(feeId);
+    if (!fee) return res.status(404).json({ message: "Fee not found" });
+
+    // already paid check
+    if (fee.status === "paid") {
+      return res.status(400).json({ message: "Fee already paid" });
+    }
+
+    // ✅ UPDATE
+    fee.status = "paid";
+    fee.paidDate = new Date();
+    fee.receiptNo = generateReceiptNo();
+
+    await student.save();
+
+    res.json({
+      success: true,
+      message: "Fee payment successful",
+      fee,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllStudents,
   createNewStudent,
@@ -216,4 +342,6 @@ module.exports = {
   getStudentsByClassName,
   updateBatchMarks,
   getExistingMarks,
+  getStudentsById,
+  updatePayment,
 };
