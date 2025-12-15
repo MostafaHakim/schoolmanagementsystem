@@ -1,8 +1,8 @@
 @import "tailwindcss";
-
 @media print {
   body {
     margin: 0;
+    font-family: "Inter", sans-serif;
   }
 
   .admit-scale {
@@ -23,4 +23,29 @@
     size: A4;
     margin: 10mm;
   }
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
