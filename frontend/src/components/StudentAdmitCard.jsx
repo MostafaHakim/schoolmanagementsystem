@@ -2,20 +2,20 @@ import React from "react";
 
 const StudentAdmitCard = ({ student }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      <div className="w-[800px] bg-white border-2 border-black rounded-lg shadow-lg p-6 print:w-full">
+    <div className="w-full flex justify-center p-2 print:p-1 print:break-after-page">
+      <div className="w-[800px] h-[500px] bg-white border-2 hidden border-black rounded-lg p-2 print:block print:p-1 print:w-full print:h-[480px]">
         {/* Header */}
-        <div className="text-center border-b-2 border-black pb-3 mb-4">
-          <h1 className="text-3xl font-bold uppercase">Your School Name</h1>
+        <div className="text-center border-b-2 border-black pb-1">
+          <h1 className="text-xl font-bold uppercase">Your School Name</h1>
           <p className="text-sm text-gray-600">School Address, City, Country</p>
-          <h2 className="mt-2 text-xl font-semibold underline">ADMIT CARD</h2>
+          <h2 className="mt-1 text-lg font-semibold underline">ADMIT CARD</h2>
         </div>
 
         {/* Student Info */}
-        <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-4 gap-4 mb-2">
           {/* Left Info */}
           <div className="col-span-3">
-            <table className="w-full border border-black text-sm">
+            <table className="w-full border border-black text-sm mt-1">
               <tbody>
                 <tr>
                   <td className="border border-black px-2 py-1 font-semibold">
@@ -70,7 +70,7 @@ const StudentAdmitCard = ({ student }) => {
         </div>
 
         {/* Exam Info */}
-        <div className="mb-4">
+        <div className="mb-2 w-full">
           <table className="w-full border border-black text-sm">
             <tbody>
               <tr>
@@ -102,18 +102,24 @@ const StudentAdmitCard = ({ student }) => {
         </div>
 
         {/* Instructions */}
-        <div className="mb-6">
-          <h3 className="font-bold underline mb-2">Instructions:</h3>
-          <ul className="list-decimal pl-5 text-sm space-y-1">
-            <li>Admit card must be brought to the examination hall.</li>
-            <li>No electronic devices are allowed.</li>
-            <li>Student must arrive 30 minutes before exam time.</li>
-            <li>Without admit card, entry is strictly prohibited.</li>
+        <div className="mb-1 w-full ">
+          <h3 className="font-bold underline mb-1">Instructions:</h3>
+          <ul className="w-full grid grid-cols-2 list-decimal pl-5 text-sm">
+            <li className="col-span-1">
+              Admit card must be brought to the examination hall.
+            </li>
+            <li className="col-span-1">No electronic devices are allowed.</li>
+            <li className="col-span-1">
+              Student must arrive 30 minutes before exam time.
+            </li>
+            <li className="col-span-1">
+              Without admit card, entry is strictly prohibited.
+            </li>
           </ul>
         </div>
 
         {/* Signatures */}
-        <div className="flex justify-between items-center mt-10">
+        <div className="flex item justify-between items-center mt-6">
           <div className="text-center">
             <div className="w-40 border-t border-black mx-auto mb-1"></div>
             <p className="text-sm">Class Teacher</p>
@@ -126,7 +132,7 @@ const StudentAdmitCard = ({ student }) => {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-xs text-gray-500 mt-4">
+        <div className="text-center text-xs text-gray-500">
           This is a computer generated admit card.
         </div>
       </div>

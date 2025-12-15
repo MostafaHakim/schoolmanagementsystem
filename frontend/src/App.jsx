@@ -12,6 +12,8 @@ import Fees from "./components/Fees";
 import Marksheet from "./pages/Marksheet";
 import ClassWiseMarksheet from "./components/ClassWiseMarksheet";
 import AllExamResults from "./components/AllExamResults";
+import Admit from "./pages/Admit";
+import StudentAdmitPage from "./components/StudentAdmitPage";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
         <Route path="teachers" element={<Teachers />} />
         <Route path="classes" element={<Classes />} />
         <Route path="exam" element={<Exam />} />
+        <Route path="admit" element={<Admit />} />
+        <Route path="admit/:id" element={<StudentAdmitPage />} />
         <Route path="marks-entry" element={<Marksheet />} />
         <Route path="marksheet" element={<ClassWiseMarksheet />} />
         <Route path="finalresult" element={<AllExamResults />} />

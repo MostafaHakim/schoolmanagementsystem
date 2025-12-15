@@ -26,6 +26,7 @@ const Sidebar = () => {
       icon: <FaClipboard />,
       subItems: [
         { name: "Semister", path: "exam" },
+        { name: "Admit Card", path: "admit" },
         { name: "Marks Entry", path: "marks-entry" },
         { name: "Marksheet", path: "marksheet" },
         { name: "Final Result", path: "finalresult" },

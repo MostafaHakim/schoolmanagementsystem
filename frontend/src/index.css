@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+@media print {
+  body {
+    margin: 0;
+  }
+
+  .admit-scale {
+    transform: scale(0.95);
+    transform-origin: top center;
+  }
+
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print\:break-after-page {
+    page-break-after: always;
+  }
+
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
