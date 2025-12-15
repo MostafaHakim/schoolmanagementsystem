@@ -8,6 +8,7 @@ const SubjectModal = ({
   setFormData,
   onSubmit,
   classes,
+  sessionName,
 }) => {
   if (!open) return null;
 
@@ -55,26 +56,28 @@ const SubjectModal = ({
           </label>
 
           <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
-            {classes.map((c) => (
-              <label key={c._id} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.subjectClasses.includes(c.className)}
-                  onChange={(e) => {
-                    const updated = e.target.checked
-                      ? [...formData.subjectClasses, c.className]
-                      : formData.subjectClasses.filter(
-                          (cls) => cls !== c.className
-                        );
-                    setFormData({
-                      ...formData,
-                      subjectClasses: updated,
-                    });
-                  }}
-                />
-                {c.className}
-              </label>
-            ))}
+            {classes
+              .filter((cls) => cls.sessionName === sessionName)
+              .map((c) => (
+                <label key={c._id} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.subjectClasses.includes(c.className)}
+                    onChange={(e) => {
+                      const updated = e.target.checked
+                        ? [...formData.subjectClasses, c.className]
+                        : formData.subjectClasses.filter(
+                            (cls) => cls !== c.className
+                          );
+                      setFormData({
+                        ...formData,
+                        subjectClasses: updated,
+                      });
+                    }}
+                  />
+                  {c.className}
+                </label>
+              ))}
           </div>
         </div>
 

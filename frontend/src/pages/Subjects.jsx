@@ -7,6 +7,7 @@ import {
   updateSubject,
 } from "../redux/subjectSlice";
 import SubjectModal from "../components/SubjectModal";
+import { useParams } from "react-router-dom";
 
 const Subjects = () => {
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const Subjects = () => {
     subjectClasses: [],
     subjectType: "",
   });
-
+  const { sessionName } = useParams();
   // Load classes
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BASE_URL}/classes`)
@@ -64,46 +65,50 @@ const Subjects = () => {
         </button>
       </div>
 
-      {classes.map((cls) => {
-        const list = getSubjectsByClass(cls.className);
-        return (
-          <div key={cls._id} className="mb-8">
-            <h3 className="text-xl font-semibold mb-2">
-              Class: {cls.className}
-            </h3>
+      {classes
+        .filter((cls) => cls.sessionName === sessionName)
+        .map((cls) => {
+          const list = getSubjectsByClass(cls.className);
+          return (
+            <div key={cls._id} className="mb-8">
+              <h3 className="text-xl font-semibold mb-2">
+                Class: {cls.className}
+              </h3>
 
-            {list.length === 0 ? (
-              <p className="text-gray-500 italic">No subjects for this class</p>
-            ) : (
-              <table className="w-full border">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border p-2">Subject</th>
-                    <th className="border p-2">Type</th>
-                    <th className="border p-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {list.map((s) => (
-                    <tr key={s._id}>
-                      <td className="border p-2">{s.subjectName}</td>
-                      <td className="border p-2">{s.subjectType}</td>
-                      <td className="border p-2 text-center">
-                        <button
-                          onClick={() => dispatch(deleteSubject(s._id))}
-                          className="px-3 py-1 bg-red-500 text-white rounded"
-                        >
-                          Delete
-                        </button>
-                      </td>
+              {list.length === 0 ? (
+                <p className="text-gray-500 italic">
+                  No subjects for this class
+                </p>
+              ) : (
+                <table className="w-full border">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border p-2">Subject</th>
+                      <th className="border p-2">Type</th>
+                      <th className="border p-2">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        );
-      })}
+                  </thead>
+                  <tbody>
+                    {list.map((s) => (
+                      <tr key={s._id}>
+                        <td className="border p-2">{s.subjectName}</td>
+                        <td className="border p-2">{s.subjectType}</td>
+                        <td className="border p-2 text-center">
+                          <button
+                            onClick={() => dispatch(deleteSubject(s._id))}
+                            className="px-3 py-1 bg-red-500 text-white rounded"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          );
+        })}
 
       <SubjectModal
         open={open}
@@ -112,6 +117,7 @@ const Subjects = () => {
         setFormData={setFormData}
         classes={classes}
         onSubmit={handleSubmit}
+        sessionName={sessionName}
       />
     </div>
   );

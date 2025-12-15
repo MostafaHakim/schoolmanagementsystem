@@ -22,4 +22,18 @@ const getAllTeacher = async (req, res) => {
   }
 };
 
-module.exports = { getAllTeacher, createNewTeacher };
+const deleteTeacher = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedTeacher = await Teacher.findByIdAndDelete(id);
+    if (!deletedTeacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+    res.status(200).json({ message: "Teacher deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+module.exports = { getAllTeacher, createNewTeacher, deleteTeacher };

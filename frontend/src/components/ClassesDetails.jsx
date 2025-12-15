@@ -8,13 +8,17 @@ const ClassDetails = () => {
   const [activeTab, setActiveTab] = useState("students");
 
   const [students, setStudents] = useState([]);
-
+  const { sessionName } = useParams();
   useEffect(() => {
     fetchStudentsByClasses();
   }, []);
 
   const fetchStudentsByClasses = async () => {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/students/${className}`)
+    await fetch(
+      `${
+        import.meta.env.VITE_BASE_URL
+      }/students/${className}?sessionName=${sessionName}`
+    )
       .then((res) => res.json())
       .then((data) => setStudents(data));
   };

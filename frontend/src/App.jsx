@@ -14,6 +14,9 @@ import ClassWiseMarksheet from "./components/ClassWiseMarksheet";
 import AllExamResults from "./components/AllExamResults";
 import Admit from "./pages/Admit";
 import StudentAdmitPage from "./components/StudentAdmitPage";
+import Settings from "./components/Settings";
+import Promotion from "./components/Promotion";
+import Display from "./components/Display";
 
 function App() {
   return (
@@ -23,6 +26,7 @@ function App() {
 
       {/* Dashboard & nested pages */}
       <Route path="/dashboard/:sessionName" element={<Dashboard />}>
+        <Route index element={<Display />} />
         <Route path="subjects" element={<Subjects />} />
         <Route path="students" element={<Students />} />
         <Route path="teachers" element={<Teachers />} />
@@ -33,7 +37,9 @@ function App() {
         <Route path="marks-entry" element={<Marksheet />} />
         <Route path="marksheet" element={<ClassWiseMarksheet />} />
         <Route path="finalresult" element={<AllExamResults />} />
+        <Route path="promotion" element={<Promotion />} />
         <Route path="fees" element={<Fees />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="admit" element={<Marksheet />} />
         <Route path="classdetails/:className" element={<ClassesDetails />} />
       </Route>

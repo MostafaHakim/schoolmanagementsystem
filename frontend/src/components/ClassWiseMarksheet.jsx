@@ -31,7 +31,7 @@ const ClassWiseMarksheet = () => {
 
   // ক্লাস fetch
   useEffect(() => {
-    fetch(`${BASE_URL}/classes`)
+    fetch(`${BASE_URL}/classes/${sessionName}`)
       .then((res) => res.json())
       .then((data) => {
         setClasses(data);
@@ -51,7 +51,7 @@ const ClassWiseMarksheet = () => {
     setLoading(true);
     setError(null);
 
-    fetch(`${BASE_URL}/students/${selectedClass}`)
+    fetch(`${BASE_URL}/students/${selectedClass}?sessionName=${sessionName}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();

@@ -89,7 +89,9 @@ const Classes = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {classes.map((cls) => {
             const totalStudents = students.filter(
-              (stu) => stu.studentClass === cls.className
+              (stu) =>
+                stu.studentClass === cls.className &&
+                stu.studentSessions === sessionName
             ).length;
 
             return (

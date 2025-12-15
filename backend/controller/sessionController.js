@@ -1,13 +1,10 @@
-// controllers/sessionController.js
 const Session = require("../model/sessionModel");
-// const FeeStructure = require("../models/FeeStructure");
 const Exams = require("../model/examModel");
+const Classes = require("../model/classModel");
 
 const startNewSession = async (req, res) => {
   try {
     const { sessionName } = req.body;
-
-    // 🔹 Step 1: Session already exists?
     const sessionExists = await Session.findOne({ sessionName });
     if (sessionExists) {
       return res.status(400).json({
@@ -16,34 +13,36 @@ const startNewSession = async (req, res) => {
       });
     }
 
-    // 🔹 Step 2: Create new session
     await Session.create({ sessionName });
 
-    // 🔹 Step 3: Check if exam already exists for this session
-    const alreadyExam = await Exams.findOne({ sessionName });
-    if (alreadyExam) {
-      return res.json({
-        success: true,
-        message: "Session created, exams already exist",
-      });
-    }
-
     const prevSession = (Number(sessionName) - 1).toString();
-    const oldExam = await Exams.find({ sessionName: prevSession });
 
-    const newExam = oldExam.map((e) => ({
-      examName: e.examName,
-      sessionName: sessionName,
-    }));
-
-    await Exams.insertMany(newExam);
+    const oldExams = await Exams.find({ sessionName: prevSession });
+    if (oldExams.length > 0) {
+      const newExams = oldExams.map((e) => ({
+        examName: e.examName,
+        sessionName,
+      }));
+      await Exams.insertMany(newExams);
+    }
+    const oldClasses = await Classes.find({ sessionName: prevSession });
+    if (oldClasses.length > 0) {
+      const newClasses = oldClasses.map((c) => ({
+        className: c.className,
+        sessionName,
+      }));
+      await Classes.insertMany(newClasses);
+    }
 
     res.json({
       success: true,
       message: "New Academic Session Started Successfully",
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

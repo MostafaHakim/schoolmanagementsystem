@@ -162,7 +162,11 @@ const getAllStudents = async (req, res) => {
 const getStudentsByClassName = async (req, res) => {
   try {
     const { className } = req.params;
-    const getStudent = await Students.find({ studentClass: className });
+    const { sessionName } = req.query;
+    const getStudent = await Students.find({
+      studentClass: className,
+      studentSessions: sessionName,
+    });
     res.status(200).json(getStudent);
   } catch (error) {
     console.error(error);
