@@ -20,13 +20,13 @@ import Display from "./components/Display";
 import Events from "./components/Events";
 import Login from "./pages/Login";
 import CreateUser from "./pages/CreateUser";
-import Index from "./pages";
+import Arrival from "./pages/Arrival";
 
 function App() {
   return (
     <Routes>
       {/* Home Page */}
-      <Route path="/" element={<Index />} />
+      <Route path="/" element={<Arrival />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<CreateUser />} />
       <Route path="/home" element={<Home />} />
