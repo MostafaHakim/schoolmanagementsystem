@@ -1,6 +1,7 @@
 const Session = require("../model/sessionModel");
 const Exams = require("../model/examModel");
 const Classes = require("../model/classModel");
+const Events = require("../model/eventModal");
 
 const startNewSession = async (req, res) => {
   try {
@@ -13,8 +14,6 @@ const startNewSession = async (req, res) => {
       });
     }
 
-    await Session.create({ sessionName });
-
     const prevSession = (Number(sessionName) - 1).toString();
 
     const oldExams = await Exams.find({ sessionName: prevSession });
@@ -22,6 +21,11 @@ const startNewSession = async (req, res) => {
       const newExams = oldExams.map((e) => ({
         examName: e.examName,
         sessionName,
+        examDate: {
+          startDate: e.examDate.startDate,
+          endDate: e.examDate.endDate,
+        },
+        status: "Upcoming",
       }));
       await Exams.insertMany(newExams);
     }
@@ -34,6 +38,19 @@ const startNewSession = async (req, res) => {
       await Classes.insertMany(newClasses);
     }
 
+    const oldEvents = await Events.find({ eventSession: prevSession });
+    console.log(oldEvents);
+    if (oldEvents.length > 0) {
+      const newEvents = oldEvents.map((e) => ({
+        eventSession: sessionName,
+        title: e.title,
+        startDate: e.startDate,
+        endDate: e.endDate,
+        type: e.type,
+      }));
+      await Events.insertMany(newEvents);
+    }
+    await Session.create({ sessionName });
     res.json({
       success: true,
       message: "New Academic Session Started Successfully",

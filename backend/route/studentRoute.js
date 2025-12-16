@@ -9,6 +9,7 @@ const {
   getStudentsById,
   updatePayment,
   promoteMultipleStudents,
+  getAllStudentsBySessionName,
 } = require("../controller/studentController");
 
 const router = express.Router();
@@ -16,6 +17,7 @@ const router = express.Router();
 router.get("/", getAllStudents);
 router.get("/existing-marks", getExistingMarks);
 router.get("/:className", getStudentsByClassName);
+router.get("/allstudents/:sessionName", getAllStudentsBySessionName);
 router.get("/profile/:id", getStudentsById);
 router.post("/", createNewStudent);
 router.post("/markentry", updateBatchMarks);

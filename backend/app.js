@@ -15,6 +15,9 @@ const teacherRoute = require("./route/teacherRoute");
 const examRoute = require("./route/examRoute");
 const marksheetRoute = require("./route/marksheetRoute");
 const feesRoute = require("./route/feesRoute");
+const eventRoute = require("./route/eventRoute");
+const userRoute = require("./route/userRoute");
+const settingsRoute = require("./route/settingRoute");
 
 app.get("/", (req, res) => {
   res.send("School Management System");
@@ -26,7 +29,10 @@ app.use("/api/subjects", subjectRoute);
 app.use("/api/students", studentRoute);
 app.use("/api/teachers", teacherRoute);
 app.use("/api/exams", examRoute);
+app.use("/api/events", eventRoute);
 app.use("/api/marksheets", marksheetRoute);
 app.use("/api/fees", feesRoute);
+app.use("/api/user", userRoute);
+app.use("/api/usersettings", settingsRoute);
 
 module.exports = app;

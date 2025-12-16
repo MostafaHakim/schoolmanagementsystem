@@ -84,7 +84,7 @@ const Marksheet = () => {
       );
       const studentData = await studentRes.json();
       setStudents(studentData);
-
+      console.log(studentData);
       const marksRes = await fetch(
         `${BASE_URL}/students/existing-marks?studentClass=${selectedClass}&examName=${selectedExam}&subjectName=${selectedSubject}&sessionName=${sessionName}`
       );
@@ -99,7 +99,7 @@ const Marksheet = () => {
     };
 
     fetchStudentsAndMarks();
-  }, [selectedClass, selectedSubject, selectedExam]);
+  }, [selectedClass, selectedSubject, selectedExam, sessionName]);
 
   const handleSaveMarks = async () => {
     const marksList = students.map((s) => ({

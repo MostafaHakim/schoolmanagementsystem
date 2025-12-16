@@ -27,6 +27,24 @@ const ExamModal = ({ open, onClose, formData, setFormData, onSubmit }) => {
           }
           className="w-full border p-3 rounded-lg mb-3 outline-none focus:border-blue-500 transition"
         />
+        <input
+          type="date"
+          placeholder="Start Date"
+          value={formData.startDate}
+          onChange={(e) =>
+            setFormData({ ...formData, startDate: e.target.value })
+          }
+          className="w-full border p-3 rounded-lg mb-3 outline-none focus:border-blue-500 transition"
+        />
+        <input
+          type="date"
+          placeholder="End Date"
+          value={formData.endDate}
+          onChange={(e) =>
+            setFormData({ ...formData, endDate: e.target.value })
+          }
+          className="w-full border p-3 rounded-lg mb-3 outline-none focus:border-blue-500 transition"
+        />
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}

@@ -242,6 +242,15 @@ const getAllStudents = async (req, res) => {
     console.error(error);
   }
 };
+const getAllStudentsBySessionName = async (req, res) => {
+  try {
+    const { sessionName } = req.params;
+    const getStudent = await Students.find({ studentSessions: sessionName });
+    res.status(200).json(getStudent);
+  } catch (error) {
+    console.error(error);
+  }
+};
 const getStudentsByClassName = async (req, res) => {
   try {
     const { className } = req.params;
@@ -432,4 +441,5 @@ module.exports = {
   getStudentsById,
   updatePayment,
   promoteMultipleStudents,
+  getAllStudentsBySessionName,
 };

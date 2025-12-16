@@ -2,6 +2,9 @@
 import { FaBell, FaUserCircle, FaBars } from "react-icons/fa";
 
 const Navbar = ({ sessionName, pageTitle, sidebarOpen, onToggleSidebar }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log(user?.userName, user?.userType);
+
   return (
     <nav className="bg-white shadow-xs border-b border-gray-200 sticky">
       <div className="px-4 md:px-6 py-2">
@@ -38,8 +41,10 @@ const Navbar = ({ sessionName, pageTitle, sidebarOpen, onToggleSidebar }) => {
             {/* User Profile */}
             <div className="flex items-center gap-2">
               <div className="hidden md:block text-right">
-                <p className="text-sm font-medium text-gray-800">Admin User</p>
-                <p className="text-xs text-gray-500">admin@school.edu</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {user?.userName}
+                </p>
+                <p className="text-xs text-gray-500">{user?.userType}</p>
               </div>
               <button className="p-1 rounded-full hover:bg-gray-100">
                 <FaUserCircle className="w-8 h-8 text-gray-600" />

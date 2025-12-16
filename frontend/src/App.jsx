@@ -17,12 +17,19 @@ import StudentAdmitPage from "./components/StudentAdmitPage";
 import Settings from "./components/Settings";
 import Promotion from "./components/Promotion";
 import Display from "./components/Display";
+import Events from "./components/Events";
+import Login from "./pages/Login";
+import CreateUser from "./pages/CreateUser";
+import Index from "./pages";
 
 function App() {
   return (
     <Routes>
       {/* Home Page */}
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Index />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<CreateUser />} />
+      <Route path="/home" element={<Home />} />
 
       {/* Dashboard & nested pages */}
       <Route path="/dashboard/:sessionName" element={<Dashboard />}>
@@ -39,6 +46,7 @@ function App() {
         <Route path="finalresult" element={<AllExamResults />} />
         <Route path="promotion" element={<Promotion />} />
         <Route path="fees" element={<Fees />} />
+        <Route path="events" element={<Events />} />
         <Route path="settings" element={<Settings />} />
         <Route path="admit" element={<Marksheet />} />
         <Route path="classdetails/:className" element={<ClassesDetails />} />

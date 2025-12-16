@@ -10,6 +10,8 @@ const Exam = () => {
   const { sessionName } = useParams();
   const [formData, setFormData] = useState({
     examName: "",
+    startDate: "",
+    endDate: "",
     sessionName: "",
   });
 
@@ -40,6 +42,8 @@ const Exam = () => {
       setEditingExam(null);
       setFormData({
         examName: "",
+        startDate: "",
+        endDate: "",
         sessionName: sessionName,
       });
     }

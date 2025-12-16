@@ -3,22 +3,13 @@ const Session = require("../model/sessionModel");
 
 const createNewExams = async (req, res) => {
   try {
-    const { examName, sessionName } = req.body;
+    const { examName, sessionName, startDate, endDate } = req.body;
 
-    // // ✅ Get current / latest session
-    // const lastSession = await Session.findOne().sort({ createdAt: -1 });
-
-    // if (!lastSession) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "No active session found. Create session first.",
-    //   });
-    // }
-
-    // ✅ Prevent duplicate exam in same session
     const exists = await Exams.findOne({
       examName,
       sessionName,
+      "examDate.startDate": startDate,
+      "examDate.endDate": endDate,
     });
 
     if (exists) {
@@ -31,6 +22,7 @@ const createNewExams = async (req, res) => {
     const createExam = await Exams.create({
       examName,
       sessionName,
+      examDate: { startDate, endDate },
     });
 
     res.status(201).json({
@@ -41,7 +33,6 @@ const createNewExams = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 const getAllExams = async (req, res) => {
   try {
     const { sessionName } = req.query;
