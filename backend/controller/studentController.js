@@ -3,75 +3,6 @@ const Exams = require("../model/examModel");
 const Subjects = require("../model/subjectModel");
 const Fees = require("../model/feesModel");
 const { generateReceiptNo } = require("../utils/generateReceipt");
-// const createNewStudent = async (req, res) => {
-//   try {
-//     const { studentName, studentClass, studentSessions, studentGroup } =
-//       req.body;
-
-//     // 🔹 1. AUTO ROLL (class + session wise)
-//     const lastStudent = await Students.findOne({
-//       studentClass,
-//       studentSessions,
-//     })
-//       .sort({ studentRoll: -1 })
-//       .select("studentRoll");
-
-//     const nextRoll = lastStudent ? lastStudent.studentRoll + 1 : 1;
-
-//     // 🔹 2. Get subjects for this class
-//     const classSubjects = await Subjects.find({
-//       subjectClass: studentClass,
-//     });
-
-//     const subjectsForExams = classSubjects.map((subj) => ({
-//       subjectName: subj.subjectName,
-//       marks: [], // initially empty
-//     }));
-
-//     // 🔹 3. Get exams for this session
-//     const examsForSession = await Exams.find({
-//       sessionName: studentSessions,
-//     });
-
-//     const studentExams = examsForSession.map((exam) => ({
-//       examName: exam.examName,
-//       sessionName: studentSessions, // 🔥 FIX HERE
-//       subjects: subjectsForExams,
-//     }));
-
-//     // 🔹 4. Create student
-//     const newStudent = new Students({
-//       studentName,
-//       studentClass,
-//       studentSessions,
-//       studentRoll: nextRoll, // 🔥 AUTO
-//       studentGroup: studentGroup || "general",
-//       studentExams,
-//     });
-
-//     const savedStudent = await newStudent.save();
-
-//     res.status(201).json({
-//       success: true,
-//       student: savedStudent,
-//     });
-//   } catch (error) {
-//     console.error(error);
-
-//     // duplicate roll safety
-//     if (error.code === 11000) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Duplicate roll detected. Try again.",
-//       });
-//     }
-
-//     res.status(500).json({
-//       success: false,
-//       error: error.message,
-//     });
-//   }
-// };
 
 const createNewStudent = async (req, res) => {
   try {
@@ -150,6 +81,158 @@ const createNewStudent = async (req, res) => {
     });
   }
 };
+
+// ==========================Promotion Start=============================
+const promoteMultipleStudents = async (req, res) => {
+  try {
+    const { promotions } = req.body;
+
+    if (!promotions || !Array.isArray(promotions)) {
+      return res.status(400).json({
+        success: false,
+        message: "Promotions array is required",
+      });
+    }
+
+    const promotedStudents = [];
+    const errors = [];
+
+    for (const promoData of promotions) {
+      try {
+        const {
+          oldStudentId,
+          studentClass,
+          studentSessions,
+          studentRoll,
+          studentGroup,
+          examSessionName,
+        } = promoData;
+
+        // Validate required fields
+        if (
+          !oldStudentId ||
+          !studentClass ||
+          !studentSessions ||
+          !studentRoll
+        ) {
+          errors.push(`Missing required fields for student: ${oldStudentId}`);
+          continue;
+        }
+
+        // 🔹 1. Get old student
+        const oldStudent = await Students.findById(oldStudentId);
+
+        if (!oldStudent) {
+          errors.push(`Student not found: ${oldStudentId}`);
+          continue;
+        }
+
+        // Check for duplicate roll in target class and session
+        const existingStudent = await Students.findOne({
+          studentClass,
+          studentSessions,
+          studentRoll,
+        });
+
+        if (existingStudent) {
+          errors.push(
+            `Roll ${studentRoll} already exists in ${studentClass} (${studentSessions})`
+          );
+          continue;
+        }
+
+        // 🔹 2. Get subjects for new class
+        const classSubjects = await Subjects.find({
+          subjectClass: studentClass,
+        });
+
+        const subjectsForExams = classSubjects.map((subj) => ({
+          subjectName: subj.subjectName,
+          marks: {
+            totalMark: null,
+            passMark: null,
+            gotMarks: null,
+          },
+        }));
+
+        // 🔹 3. Get exams
+        const examsForSession = await Exams.find({
+          sessionName: examSessionName,
+        });
+
+        const studentExams = examsForSession.map((exam) => ({
+          examName: exam.examName,
+          sessionName: studentSessions,
+          subjects: subjectsForExams,
+        }));
+
+        // 🔹 4. Get fees for new class
+        const applicableFees = await Fees.find({
+          feesClass: studentClass,
+        });
+
+        const studentFees = applicableFees.map((fee) => ({
+          feesName: fee.feesName,
+          feeAmount: fee.feesAmount,
+          status: "due",
+          paidDate: null,
+          receiptNo: null,
+        }));
+
+        // 🔹 5. Create promoted student
+        const promotedStudent = new Students({
+          studentName: oldStudent.studentName,
+          studentClass,
+          studentSessions,
+          studentRoll: parseInt(studentRoll),
+          studentGroup: studentGroup || oldStudent.studentGroup || "General",
+          studentExams,
+          studentFees,
+          promotedFrom: {
+            studentId: oldStudent._id,
+            previousClass: oldStudent.studentClass,
+            previousSession: oldStudent.studentSessions,
+            promotionDate: new Date(),
+          },
+        });
+
+        const savedStudent = await promotedStudent.save();
+        promotedStudents.push({
+          id: savedStudent._id,
+          name: savedStudent.studentName,
+          class: savedStudent.studentClass,
+          session: savedStudent.studentSessions,
+          roll: savedStudent.studentRoll,
+          group: savedStudent.studentGroup,
+        });
+      } catch (error) {
+        console.error(`Error promoting student: ${error.message}`);
+        if (error.code === 11000) {
+          errors.push(`Duplicate roll number in target class`);
+        } else {
+          errors.push(`Failed to promote student: ${error.message}`);
+        }
+      }
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `Promotion completed. ${promotedStudents.length} successful, ${errors.length} failed`,
+      promotedCount: promotedStudents.length,
+      errorCount: errors.length,
+      errors: errors.length > 0 ? errors : undefined,
+      students: promotedStudents,
+    });
+  } catch (error) {
+    console.error("Promotion error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+// ==========================Promotion End=============================
 
 const getAllStudents = async (req, res) => {
   try {
@@ -348,4 +431,5 @@ module.exports = {
   getExistingMarks,
   getStudentsById,
   updatePayment,
+  promoteMultipleStudents,
 };

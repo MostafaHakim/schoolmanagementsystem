@@ -4,7 +4,7 @@ import { FaBell, FaUserCircle, FaBars } from "react-icons/fa";
 const Navbar = ({ sessionName, pageTitle, sidebarOpen, onToggleSidebar }) => {
   return (
     <nav className="bg-white shadow-xs border-b border-gray-200 sticky">
-      <div className="px-4 md:px-6 py-4">
+      <div className="px-4 md:px-6 py-2">
         <div className="flex items-center justify-between">
           {/* Left side - Toggle button and page title */}
           <div className="flex items-center gap-4">
@@ -16,11 +16,11 @@ const Navbar = ({ sessionName, pageTitle, sidebarOpen, onToggleSidebar }) => {
             </button>
 
             <div>
-              <h1 className="text-lg md:text-xl font-semibold text-gray-800">
+              <h1 className="text-sm  font-semibold text-gray-800">
                 {pageTitle}
               </h1>
               {sessionName && (
-                <p className="text-sm text-gray-600">
+                <p className="text-xs text-gray-600">
                   Session: <span className="font-medium">{sessionName}</span>
                 </p>
               )}

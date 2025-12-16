@@ -1,512 +1,3 @@
-// // import React, { useEffect, useState } from "react";
-// // import { useDispatch, useSelector } from "react-redux";
-// // import {
-// //   fetchStudents,
-// //   addStudent,
-// //   updateStudent,
-// //   deleteStudent,
-// // } from "../redux/studentsSlice";
-// // import { useParams } from "react-router-dom";
-
-// // const Students = () => {
-// //   const dispatch = useDispatch();
-// //   const { students, loading } = useSelector((state) => state.students);
-// //   const { sessionName } = useParams();
-
-// //   const [classes, setClasses] = useState([]);
-// //   const [modalOpen, setModalOpen] = useState(false);
-// //   const [editingStudent, setEditingStudent] = useState(null);
-
-// //   const [formData, setFormData] = useState({
-// //     studentName: "",
-// //     studentClass: "",
-// //     studentSessions: sessionName,
-// //     studentGroup: "General",
-// //   });
-
-// //   // 🔹 Load students
-// //   useEffect(() => {
-// //     dispatch(fetchStudents());
-// //   }, [dispatch]);
-
-// //   // 🔹 Load classes
-// //   useEffect(() => {
-// //     fetchClass();
-// //   }, []);
-
-// //   const fetchClass = async () => {
-// //     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/classes`);
-// //     const data = await res.json();
-// //     setClasses(data);
-// //   };
-
-// //   // 🔹 Open modal
-// //   const openModal = (student = null) => {
-// //     if (student) {
-// //       setEditingStudent(student);
-// //       setFormData({
-// //         studentName: student.studentName,
-// //         studentClass: student.studentClass,
-// //         studentGroup: student.studentGroup || "General",
-// //         studentSessions: student.studentSessions || sessionName,
-// //       });
-// //     } else {
-// //       setEditingStudent(null);
-// //       setFormData({
-// //         studentName: "",
-// //         studentClass: "",
-// //         studentSessions: sessionName,
-// //         studentGroup: "General",
-// //       });
-// //     }
-// //     setModalOpen(true);
-// //   };
-
-// //   // 🔹 Handle input change
-// //   const handleChange = (e) =>
-// //     setFormData({ ...formData, [e.target.name]: e.target.value });
-
-// //   // 🔹 Submit form
-// //   const handleSubmit = (e) => {
-// //     e.preventDefault();
-
-// //     if (editingStudent) {
-// //       dispatch(updateStudent({ id: editingStudent._id, student: formData }))
-// //         .unwrap()
-// //         .then(() => dispatch(fetchStudents()));
-// //     } else {
-// //       dispatch(addStudent(formData))
-// //         .unwrap()
-// //         .then(() => dispatch(fetchStudents()));
-// //     }
-
-// //     setModalOpen(false);
-// //   };
-
-// //   // 🔹 Delete student
-// //   const handleDelete = (id) => {
-// //     if (window.confirm("Are you sure you want to delete this student?")) {
-// //       dispatch(deleteStudent(id)).then(() => dispatch(fetchStudents()));
-// //     }
-// //   };
-
-// //   // 🔹 Filter by session
-// //   const filteredStudents = students.filter(
-// //     (s) => s.studentSessions === sessionName
-// //   );
-
-// //   // 🔹 Group by class
-// //   const studentsByClass = filteredStudents.reduce((acc, student) => {
-// //     if (!acc[student.studentClass]) {
-// //       acc[student.studentClass] = [];
-// //     }
-// //     acc[student.studentClass].push(student);
-// //     return acc;
-// //   }, {});
-
-// //   return (
-// //     <div className="p-6  mx-auto">
-// //       <div className="flex flex-row items-center justify-between">
-// //         <h2 className="text-3xl font-bold mb-6">
-// //           Students — Session {sessionName}
-// //         </h2>
-
-// //         <button
-// //           onClick={() => openModal()}
-// //           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-6"
-// //         >
-// //           Add Student
-// //         </button>
-// //       </div>
-
-// //       {/* 🔹 Class wise tables */}
-// //       {loading ? (
-// //         <p className="text-center text-gray-500">Loading students...</p>
-// //       ) : Object.keys(studentsByClass).length === 0 ? (
-// //         <p className="text-center text-gray-500 italic">No students found.</p>
-// //       ) : (
-// //         <div className="grid grid-cols-3 gap-4">
-// //           {Object.entries(studentsByClass).map(([className, classStudents]) => (
-// //             <div key={className} className="mb-10 col-span-1">
-// //               <h3 className="text-xl font-bold mb-3 text-blue-600">
-// //                 Class: {className}
-// //               </h3>
-
-// //               <div className="overflow-x-auto">
-// //                 <table className="w-full border rounded">
-// //                   <thead className="bg-gray-100">
-// //                     <tr>
-// //                       <th className="border px-4 py-2">Roll</th>
-// //                       <th className="border px-4 py-2">Name</th>
-// //                       <th className="border px-4 py-2">Group</th>
-// //                       <th className="border px-4 py-2">Actions</th>
-// //                     </tr>
-// //                   </thead>
-// //                   <tbody>
-// //                     {classStudents
-// //                       .sort((a, b) => a.studentRoll - b.studentRoll)
-// //                       .map((student) => (
-// //                         <tr key={student._id}>
-// //                           <td className="border px-4 py-2">
-// //                             {student.studentRoll}
-// //                           </td>
-// //                           <td className="border px-4 py-2">
-// //                             {student.studentName}
-// //                           </td>
-// //                           <td className="border px-4 py-2">
-// //                             {student.studentGroup}
-// //                           </td>
-// //                           <td className="border px-4 py-2">
-// //                             <div className="flex gap-2">
-// //                               <button
-// //                                 className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
-// //                                 onClick={() => openModal(student)}
-// //                               >
-// //                                 Edit
-// //                               </button>
-// //                               <button
-// //                                 className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-// //                                 onClick={() => handleDelete(student._id)}
-// //                               >
-// //                                 Delete
-// //                               </button>
-// //                             </div>
-// //                           </td>
-// //                         </tr>
-// //                       ))}
-// //                   </tbody>
-// //                 </table>
-// //               </div>
-// //             </div>
-// //           ))}
-// //         </div>
-// //       )}
-
-// //       {/* 🔹 Modal */}
-// //       {modalOpen && (
-// //         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-// //           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-// //             <h3 className="text-xl font-bold mb-4">
-// //               {editingStudent ? "Edit Student" : "Add Student"}
-// //             </h3>
-
-// //             <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-// //               <input
-// //                 type="text"
-// //                 name="studentName"
-// //                 placeholder="Student Name"
-// //                 value={formData.studentName}
-// //                 onChange={handleChange}
-// //                 required
-// //                 className="border px-3 py-2 rounded"
-// //               />
-
-// //               <select
-// //                 name="studentClass"
-// //                 value={formData.studentClass}
-// //                 onChange={handleChange}
-// //                 required
-// //                 className="border px-3 py-2 rounded"
-// //               >
-// //                 <option value="">--Select Class--</option>
-// //                 {classes.map((cls) => (
-// //                   <option key={cls._id} value={cls.className}>
-// //                     {cls.className}
-// //                   </option>
-// //                 ))}
-// //               </select>
-
-// //               <input
-// //                 type="text"
-// //                 name="studentGroup"
-// //                 placeholder="Group"
-// //                 value={formData.studentGroup}
-// //                 onChange={handleChange}
-// //                 className="border px-3 py-2 rounded"
-// //               />
-
-// //               <div className="flex justify-end gap-2 mt-4">
-// //                 <button
-// //                   type="button"
-// //                   className="px-4 py-2 rounded border"
-// //                   onClick={() => setModalOpen(false)}
-// //                 >
-// //                   Cancel
-// //                 </button>
-// //                 <button
-// //                   type="submit"
-// //                   className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
-// //                 >
-// //                   {editingStudent ? "Update" : "Add"}
-// //                 </button>
-// //               </div>
-// //             </form>
-// //           </div>
-// //         </div>
-// //       )}
-// //     </div>
-// //   );
-// // };
-
-// // export default Students;
-
-// import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import {
-//   fetchStudents,
-//   addStudent,
-//   updateStudent,
-//   deleteStudent,
-// } from "../redux/studentsSlice";
-// import { useParams, useNavigate } from "react-router-dom";
-
-// const Students = () => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const { students, loading } = useSelector((state) => state.students);
-//   const { sessionName } = useParams();
-
-//   const [classes, setClasses] = useState([]);
-//   const [activeClass, setActiveClass] = useState(null);
-
-//   // Modal state
-//   const [modalOpen, setModalOpen] = useState(false);
-//   const [editingStudent, setEditingStudent] = useState(null);
-//   const [formData, setFormData] = useState({
-//     studentName: "",
-//     studentClass: "",
-//     studentSessions: sessionName,
-//     studentGroup: "General",
-//   });
-
-//   // 🔹 Load students
-//   useEffect(() => {
-//     dispatch(fetchStudents());
-//   }, [dispatch]);
-
-//   // 🔹 Load classes
-//   useEffect(() => {
-//     fetchClass();
-//   }, []);
-
-//   const fetchClass = async () => {
-//     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/classes`);
-//     const data = await res.json();
-//     setClasses(data);
-//     if (data.length > 0) setActiveClass(data[0].className);
-//   };
-
-//   // 🔹 Filter students by session
-//   const filteredStudents = students.filter(
-//     (s) => s.studentSessions === sessionName
-//   );
-
-//   // 🔹 Students by class
-//   const studentsByClass = filteredStudents.reduce((acc, student) => {
-//     if (!acc[student.studentClass]) acc[student.studentClass] = [];
-//     acc[student.studentClass].push(student);
-//     return acc;
-//   }, {});
-
-//   // 🔹 Modal handlers
-//   const openModal = (student = null) => {
-//     if (student) {
-//       setEditingStudent(student);
-//       setFormData({
-//         studentName: student.studentName,
-//         studentClass: student.studentClass,
-//         studentGroup: student.studentGroup || "General",
-//         studentSessions: student.studentSessions || sessionName,
-//       });
-//     } else {
-//       setEditingStudent(null);
-//       setFormData({
-//         studentName: "",
-//         studentClass: activeClass || "",
-//         studentSessions: sessionName,
-//         studentGroup: "General",
-//       });
-//     }
-//     setModalOpen(true);
-//   };
-
-//   const handleChange = (e) =>
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (editingStudent) {
-//       dispatch(updateStudent({ id: editingStudent._id, student: formData }))
-//         .unwrap()
-//         .then(() => dispatch(fetchStudents()));
-//     } else {
-//       dispatch(addStudent(formData))
-//         .unwrap()
-//         .then(() => dispatch(fetchStudents()));
-//     }
-//     setModalOpen(false);
-//   };
-
-//   const handleDelete = (id) => {
-//     if (window.confirm("Are you sure you want to delete this student?")) {
-//       dispatch(deleteStudent(id)).then(() => dispatch(fetchStudents()));
-//     }
-//   };
-
-//   return (
-//     <div className="p-6 mx-auto max-w-5xl">
-//       <h2 className="text-3xl font-bold mb-6">
-//         Students — Session {sessionName}
-//       </h2>
-
-//       {/* 🔹 Class Tabs + Add Student */}
-//       <div className="flex items-center gap-2 overflow-x-auto mb-6">
-//         {classes.map((cls) => (
-//           <button
-//             key={cls._id}
-//             className={`px-4 py-2 rounded border ${
-//               activeClass === cls.className
-//                 ? "bg-blue-500 text-white"
-//                 : "bg-white text-gray-700"
-//             }`}
-//             onClick={() => setActiveClass(cls.className)}
-//           >
-//             {cls.className}
-//           </button>
-//         ))}
-
-//         <button
-//           onClick={() => openModal()}
-//           className="ml-auto bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-//         >
-//           Add Student
-//         </button>
-//       </div>
-
-//       {/* 🔹 Students Table */}
-//       {loading ? (
-//         <p className="text-center text-gray-500">Loading students...</p>
-//       ) : !activeClass || !studentsByClass[activeClass] ? (
-//         <p className="text-center text-gray-500 italic">No students found.</p>
-//       ) : (
-//         <div className="overflow-x-auto border rounded">
-//           <table className="w-full border-collapse">
-//             <thead className="bg-gray-100">
-//               <tr>
-//                 <th className="border px-4 py-2">Roll</th>
-//                 <th className="border px-4 py-2">Name</th>
-//                 <th className="border px-4 py-2">Group</th>
-//                 <th className="border px-4 py-2">Actions</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {studentsByClass[activeClass]
-//                 .sort((a, b) => a.studentRoll - b.studentRoll)
-//                 .map((student) => (
-//                   <tr
-//                     key={student._id}
-//                     className="cursor-pointer hover:bg-gray-100"
-//                   >
-//                     <td className="border px-4 py-2">{student.studentRoll}</td>
-//                     <td
-//                       className="border px-4 py-2 text-blue-600 underline"
-//                       onClick={() =>
-//                         navigate(`/students/profile/${student._id}`)
-//                       }
-//                     >
-//                       {student.studentName}
-//                     </td>
-//                     <td className="border px-4 py-2">{student.studentGroup}</td>
-//                     <td className="border px-4 py-2">
-//                       <div className="flex gap-2">
-//                         <button
-//                           className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
-//                           onClick={() => openModal(student)}
-//                         >
-//                           Edit
-//                         </button>
-//                         <button
-//                           className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-//                           onClick={() => handleDelete(student._id)}
-//                         >
-//                           Delete
-//                         </button>
-//                       </div>
-//                     </td>
-//                   </tr>
-//                 ))}
-//             </tbody>
-//           </table>
-//         </div>
-//       )}
-
-//       {/* 🔹 Modal */}
-//       {modalOpen && (
-//         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-//           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-//             <h3 className="text-xl font-bold mb-4">
-//               {editingStudent ? "Edit Student" : "Add Student"}
-//             </h3>
-
-//             <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-//               <input
-//                 type="text"
-//                 name="studentName"
-//                 placeholder="Student Name"
-//                 value={formData.studentName}
-//                 onChange={handleChange}
-//                 required
-//                 className="border px-3 py-2 rounded"
-//               />
-
-//               <select
-//                 name="studentClass"
-//                 value={formData.studentClass}
-//                 onChange={handleChange}
-//                 required
-//                 className="border px-3 py-2 rounded"
-//               >
-//                 <option value="">--Select Class--</option>
-//                 {classes.map((cls) => (
-//                   <option key={cls._id} value={cls.className}>
-//                     {cls.className}
-//                   </option>
-//                 ))}
-//               </select>
-
-//               <input
-//                 type="text"
-//                 name="studentGroup"
-//                 placeholder="Group"
-//                 value={formData.studentGroup}
-//                 onChange={handleChange}
-//                 className="border px-3 py-2 rounded"
-//               />
-
-//               <div className="flex justify-end gap-2 mt-4">
-//                 <button
-//                   type="button"
-//                   className="px-4 py-2 rounded border"
-//                   onClick={() => setModalOpen(false)}
-//                 >
-//                   Cancel
-//                 </button>
-//                 <button
-//                   type="submit"
-//                   className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
-//                 >
-//                   {editingStudent ? "Update" : "Add"}
-//                 </button>
-//               </div>
-//             </form>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Students;
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -535,6 +26,8 @@ import {
   UserPlus,
   RefreshCw,
   AlertCircle,
+  SortAsc,
+  SortDesc,
 } from "lucide-react";
 
 const Students = () => {
@@ -550,6 +43,7 @@ const Students = () => {
   const [editingStudent, setEditingStudent] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState("asc"); // "asc" বা "desc"
   const studentsPerPage = 8;
 
   const [formData, setFormData] = useState({
@@ -580,7 +74,14 @@ const Students = () => {
     }
   };
 
-  // 🔹 Filter students by session and search
+  // 🔹 রোল নম্বর অনুযায়ী সর্ট করার ফাংশন
+  const sortByRoll = (a, b) => {
+    const rollA = parseInt(a.studentRoll) || 0;
+    const rollB = parseInt(b.studentRoll) || 0;
+    return sortOrder === "asc" ? rollA - rollB : rollB - rollA;
+  };
+
+  // 🔹 Filter students by session and search - WITH SORTING
   const filteredStudents = students
     .filter((s) => s.studentSessions === sessionName)
     .filter((student) => {
@@ -591,7 +92,8 @@ const Students = () => {
       const matchesClass =
         activeClass === "all" || student.studentClass === activeClass;
       return matchesSearch && matchesClass;
-    });
+    })
+    .sort(sortByRoll); // রোল অনুযায়ী সর্ট করা
 
   // 🔹 Pagination
   const indexOfLastStudent = currentPage * studentsPerPage;
@@ -686,6 +188,11 @@ const Students = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  // 🔹 টগল সর্ট অর্ডার
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
   return (
@@ -821,22 +328,24 @@ const Students = () => {
               >
                 All Classes
               </button>
-              {classes.map((cls) => (
-                <button
-                  key={cls._id}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                    activeClass === cls.className
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setActiveClass(cls.className)}
-                >
-                  {cls.className}
-                  <span className="ml-2 text-xs bg-gray-200 px-1.5 py-0.5 rounded">
-                    {byClassCount[cls.className] || 0}
-                  </span>
-                </button>
-              ))}
+              {classes
+                .filter((cls) => cls.sessionName === sessionName)
+                .map((cls) => (
+                  <button
+                    key={cls._id}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+                      activeClass === cls.className
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                    onClick={() => setActiveClass(cls.className)}
+                  >
+                    {cls.className}
+                    <span className="ml-2 text-xs bg-gray-200 px-1.5 py-0.5 rounded text-black">
+                      {byClassCount[cls.className] || 0}
+                    </span>
+                  </button>
+                ))}
             </div>
           </div>
         </div>
@@ -849,13 +358,31 @@ const Students = () => {
               <h2 className="text-lg font-semibold text-gray-800">
                 Students List
               </h2>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Filter className="w-4 h-4" />
-                <span>
-                  Showing {indexOfFirstStudent + 1}-
-                  {Math.min(indexOfLastStudent, filteredStudents.length)} of{" "}
-                  {filteredStudents.length} students
-                </span>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={toggleSortOrder}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700 transition"
+                >
+                  {sortOrder === "asc" ? (
+                    <>
+                      <SortAsc className="w-4 h-4" />
+                      <span>Ascending</span>
+                    </>
+                  ) : (
+                    <>
+                      <SortDesc className="w-4 h-4" />
+                      <span>Descending</span>
+                    </>
+                  )}
+                </button>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Filter className="w-4 h-4" />
+                  <span>
+                    Showing {indexOfFirstStudent + 1}-
+                    {Math.min(indexOfLastStudent, filteredStudents.length)} of{" "}
+                    {filteredStudents.length} students
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -894,7 +421,19 @@ const Students = () => {
                   <thead>
                     <tr className="bg-gray-50">
                       <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Roll No
+                        <div className="flex items-center gap-1">
+                          Roll No
+                          <button
+                            onClick={toggleSortOrder}
+                            className="p-1 hover:bg-gray-200 rounded"
+                          >
+                            {sortOrder === "asc" ? (
+                              <SortAsc className="w-3 h-3" />
+                            ) : (
+                              <SortDesc className="w-3 h-3" />
+                            )}
+                          </button>
+                        </div>
                       </th>
                       <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Student Name
@@ -1116,11 +655,13 @@ const Students = () => {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select Class</option>
-                    {classes.map((cls) => (
-                      <option key={cls._id} value={cls.className}>
-                        {cls.className}
-                      </option>
-                    ))}
+                    {classes
+                      .filter((cls) => cls.sessionName === sessionName)
+                      .map((cls) => (
+                        <option key={cls._id} value={cls.className}>
+                          {cls.className}
+                        </option>
+                      ))}
                   </select>
                 </div>
 

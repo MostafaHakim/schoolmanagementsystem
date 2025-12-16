@@ -42,7 +42,7 @@ const Dashboard = () => {
   return (
     <div className="h-screen bg-gray-50 overflow-hidden">
       {/* ===== Navbar (Fixed) ===== */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-16">
+      <div className="fixed top-0 left-0 right-0 z-50 h-14">
         <Navbar
           sessionName={sessionName}
           pageTitle={pageTitle}
@@ -52,10 +52,10 @@ const Dashboard = () => {
       </div>
 
       {/* ===== Body Area ===== */}
-      <div className="flex pt-16 h-full">
+      <div className="flex pt-14 h-full">
         {/* ===== Sidebar (Fixed) ===== */}
         <div
-          className={`fixed top-18 left-0 h-[calc(100vh-64px)] 
+          className={`fixed top-14 left-0 h-[calc(100vh-64px)] 
           bg-white border-r transition-all duration-300 z-40
           ${sidebarOpen ? "w-64" : "w-20"}`}
         >
