@@ -24,7 +24,7 @@ const ClassDetails = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 bg-white shadow rounded-lg p-6">
+    <div className="max-w-6xl mx-auto mt-10 bg-white shadow rounded-lg p-6 capitalize">
       {/* Header */}
       <h2 className="text-3xl font-bold mb-6">Class Details : {className}</h2>
 

@@ -54,7 +54,7 @@ const Subjects = () => {
   };
 
   return (
-    <div className="mx-auto p-6 bg-white shadow rounded-lg mt-8">
+    <div className="mx-auto p-6 bg-white shadow rounded-lg mt-8 capitalize">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold">Subjects</h2>
         <button

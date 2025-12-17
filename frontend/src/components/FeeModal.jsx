@@ -50,7 +50,7 @@ const FeeModal = ({
           onChange={(e) =>
             setFormData({ ...formData, feesClass: e.target.value })
           }
-          className="w-full border p-3 rounded-lg mb-3 outline-none focus:border-blue-500 transition"
+          className="w-full border p-3 rounded-lg mb-3 outline-none focus:border-blue-500 transition capitalize"
         >
           <option value="">Select Class</option>
           {classes.map((cls) => (

@@ -189,7 +189,7 @@ const Promotion = () => {
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 min-h-screen capitalize">
       <h1 className="text-3xl font-bold mb-6">Student Promotion</h1>
       <div className="text-green-500">{msg && msg}</div>
       {/* Session & Class */}
@@ -207,7 +207,7 @@ const Promotion = () => {
         <select
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.target.value)}
-          className="border p-2 rounded"
+          className="border p-2 rounded capitalize"
         >
           <option value="">Select Class</option>
           {classes.map((c) => (
@@ -229,7 +229,7 @@ const Promotion = () => {
           onChange={(e) =>
             setBulkSettings({ ...bulkSettings, targetClass: e.target.value })
           }
-          className="border p-2 rounded"
+          className="border p-2 rounded capitalize"
         >
           <option value="">Target Class</option>
           {classes.map((c) => (

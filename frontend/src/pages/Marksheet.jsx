@@ -141,7 +141,7 @@ const Marksheet = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-6 capitalize">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -265,7 +265,7 @@ const Marksheet = () => {
                   Select Class
                 </h2>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 capitalize">
                 {loading && !classes.length ? (
                   <div className="animate-pulse space-y-2 w-full">
                     {[1, 2, 3].map((i) => (
@@ -285,8 +285,8 @@ const Marksheet = () => {
                       }}
                       className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                         selectedClass === c.className
-                          ? "bg-gradient-to-r from-green-600 to-green-700 text-white shadow-md transform scale-105"
-                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                          ? "bg-gradient-to-r from-green-600 to-green-700 text-white shadow-md transform scale-105 capitalize"
+                          : "bg-gray-100 hover:bg-gray-200 text-gray-700 capitalize"
                       }`}
                     >
                       {c.className}

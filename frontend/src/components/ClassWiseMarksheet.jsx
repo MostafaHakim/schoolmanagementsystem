@@ -465,7 +465,7 @@ const ClassWiseMarksheet = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6 capitalize">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
           🎓 Class-wise Marksheet Generator
@@ -495,14 +495,14 @@ const ClassWiseMarksheet = () => {
             {exams.map((exam) => (
               <button
                 key={exam._id}
-                className={`px-4 py-3 rounded-lg transition-all ${
+                className={`px-4 py-3 rounded-lg transition-all space-x-2 duration-150 ${
                   selectedExam === exam.examName
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg scale-105"
+                    ? "bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg scale-105"
                     : "bg-gray-100 hover:bg-gray-200 text-gray-700"
                 }`}
                 onClick={() => setSelectedExam(exam.examName)}
               >
-                {exam.examName}
+                {exam.examName + " " + sessionName}
               </button>
             ))}
           </div>
@@ -525,7 +525,7 @@ const ClassWiseMarksheet = () => {
                 className={`px-4 py-3 rounded-lg transition-all ${
                   selectedClass === cls.className
                     ? "bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg scale-105"
-                    : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    : "bg-gray-100 hover:bg-gray-200 text-gray-700 capitalize"
                 }`}
                 onClick={() => {
                   setSelectedClass(cls.className);

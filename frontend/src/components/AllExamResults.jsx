@@ -1191,8 +1191,8 @@ const AllExamResults = () => {
               key={cls._id}
               className={`px-6 py-4 rounded-xl transition-all transform hover:scale-105 ${
                 selectedClass === cls.className
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-2xl"
-                  : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 shadow-lg"
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-2xl capitalize"
+                  : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 shadow-lg capitalize"
               }`}
               onClick={() => {
                 setSelectedClass(cls.className);

@@ -137,7 +137,9 @@ const Fees = () => {
             >
               <h3 className="text-xl font-semibold mb-2">{fee.feesName}</h3>
               <p className="text-gray-600 mb-1">Amount: {fee.feesAmount}</p>
-              <p className="text-gray-600 mb-2">Class: {fee.feesClass}</p>
+              <p className="text-gray-600 mb-2 capitalize">
+                Class: {fee.feesClass}
+              </p>
               <div className="flex gap-2 mt-3">
                 <button
                   onClick={() => openModal(fee)}

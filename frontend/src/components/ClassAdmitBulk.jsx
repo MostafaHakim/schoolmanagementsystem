@@ -2,7 +2,14 @@ import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import StudentAdmitCard from "./StudentAdmitCard";
 
-const ClassAdmitBulk = ({ students, className }) => {
+const ClassAdmitBulk = ({
+  students,
+  selectedClass,
+  selectedExam,
+  sessionName,
+  settings,
+  user,
+}) => {
   // ❗ Safety guard
   if (!students || students.length === 0) return null;
 
@@ -33,7 +40,14 @@ const ClassAdmitBulk = ({ students, className }) => {
           .sort((a, b) => a.studentRoll - b.studentRoll)
           .map((student) => (
             <div key={student._id} className="admit-card-wrapper">
-              <StudentAdmitCard student={student} />
+              <StudentAdmitCard
+                student={student}
+                selectedClass={selectedClass}
+                selectedExam={selectedExam}
+                sessionName={sessionName}
+                settings={settings}
+                user={user}
+              />
             </div>
           ))}
       </div>
