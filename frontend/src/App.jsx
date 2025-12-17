@@ -48,7 +48,6 @@ function App() {
         <Route path="fees" element={<Fees />} />
         <Route path="events" element={<Events />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="admit" element={<Marksheet />} />
         <Route path="classdetails/:className" element={<ClassesDetails />} />
       </Route>
 

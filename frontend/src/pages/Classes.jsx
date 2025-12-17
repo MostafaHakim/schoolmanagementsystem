@@ -131,7 +131,9 @@ const Classes = () => {
                   to={`/dashboard/${sessionName}/classdetails/${cls.className}`}
                   className="mb-4 hover:text-blue-600 transition"
                 >
-                  <h3 className="text-xl font-semibold">{cls.className}</h3>
+                  <h3 className="text-xl font-semibold capitalize">
+                    {cls.className}
+                  </h3>
                   <p className="text-gray-600 mt-1">
                     Total Students:{" "}
                     <span className="font-medium">{totalStudents}</span>

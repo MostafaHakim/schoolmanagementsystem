@@ -13,7 +13,9 @@ const Admit = () => {
   const { students, loading } = useSelector((state) => state.students);
 
   const [classes, setClasses] = useState([]);
+  const [exams, setExams] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedExam, setSelectedExam] = useState(null);
 
   // 🔹 Single student print ref
   const singlePrintRef = useRef(null);
@@ -32,13 +34,29 @@ const Admit = () => {
   useEffect(() => {
     fetchClass();
   }, []);
-
+  useEffect(() => {
+    fetchExams();
+  }, []);
   const fetchClass = async () => {
     const res = await fetch(
       `${import.meta.env.VITE_BASE_URL}/classes/${sessionName}`
     );
     const data = await res.json();
     setClasses(data);
+  };
+
+  const fetchExams = async () => {
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/exams/filter?sessionName=${sessionName}`
+      );
+      const data = await res.json();
+      setExams(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // 🔹 filter students by session + class
@@ -52,8 +70,25 @@ const Admit = () => {
         Admit Card — Session {sessionName}
       </h2>
 
-      {/* 🔹 Class Selection */}
+      {/* 🔹 Exam Selection */}
       <h3 className="text-lg font-semibold mb-2">Select Class</h3>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mb-6">
+        {exams.map((exam) => (
+          <button
+            key={exam._id}
+            onClick={() => setSelectedExam(exam.examName)}
+            className={`border rounded px-4 py-2 text-center hover:bg-blue-100
+              ${
+                selectedExam === exam.examName
+                  ? "bg-blue-500 text-white"
+                  : "bg-white"
+              }`}
+          >
+            {exam.examName}
+          </button>
+        ))}
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mb-6">
         {classes.map((cls) => (
@@ -140,7 +175,11 @@ const Admit = () => {
       {selectedStudent && (
         <div className="hidden">
           <div ref={singlePrintRef}>
-            <StudentAdmitCard student={selectedStudent} />
+            <StudentAdmitCard
+              student={selectedStudent}
+              selectedExam={selectedExam}
+              sessionName={sessionName}
+            />
           </div>
         </div>
       )}

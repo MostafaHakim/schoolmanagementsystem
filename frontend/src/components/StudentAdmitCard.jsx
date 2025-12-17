@@ -1,18 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const StudentAdmitCard = ({ student }) => {
+const StudentAdmitCard = ({ student, selectedExam, sessionName }) => {
+  const [settings, setSettings] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/usersettings`);
+      const data = await res.json();
+      if (data.success && data.data.length > 0) {
+        setSettings(data.data[0]);
+      } else {
+        setSettings(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  console.log(settings);
   return (
     <div className="w-full flex justify-center p-2 print:p-1 print:break-after-page">
       <div className="w-[800px] h-[500px] bg-white border-2 hidden border-black rounded-lg p-2 print:block print:p-1 print:w-full print:h-[480px]">
         {/* Header */}
         <div className="text-center border-b-2 border-black pb-1">
-          <h1 className="text-xl font-bold uppercase">Your School Name</h1>
-          <p className="text-sm text-gray-600">School Address, City, Country</p>
+          <h1 className="text-xl font-bold uppercase">
+            {settings && settings.schoolName}
+          </h1>
+          <p className="text-sm text-gray-600">
+            {settings && settings.schoolAddress}
+          </p>
           <h2 className="mt-1 text-lg font-semibold underline">ADMIT CARD</h2>
         </div>
 
         {/* Student Info */}
-        <div className="grid grid-cols-4 gap-4 mb-2">
+        <div className="grid grid-cols-4 gap-4 mb-2 capitalize">
           {/* Left Info */}
           <div className="col-span-3">
             <table className="w-full border border-black text-sm mt-1">
@@ -78,7 +101,7 @@ const StudentAdmitCard = ({ student }) => {
                   Examination
                 </td>
                 <td className="border border-black px-2 py-1">
-                  Annual Examination 2025
+                  {selectedExam && selectedExam + " " + sessionName}
                 </td>
               </tr>
               <tr>
@@ -93,9 +116,7 @@ const StudentAdmitCard = ({ student }) => {
                 <td className="border border-black px-2 py-1 font-semibold">
                   Exam Time
                 </td>
-                <td className="border border-black px-2 py-1">
-                  10:00 AM – 1:00 PM
-                </td>
+                <td className="border border-black px-2 py-1"></td>
               </tr>
             </tbody>
           </table>
@@ -120,6 +141,10 @@ const StudentAdmitCard = ({ student }) => {
 
         {/* Signatures */}
         <div className="flex item justify-between items-center mt-6">
+          <div className="text-center">
+            <div className="w-40 border-t border-black mx-auto mb-1"></div>
+            <p className="text-sm">Created by - {user.userName}</p>
+          </div>
           <div className="text-center">
             <div className="w-40 border-t border-black mx-auto mb-1"></div>
             <p className="text-sm">Class Teacher</p>

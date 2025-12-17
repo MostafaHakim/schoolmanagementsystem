@@ -101,16 +101,18 @@ const CreateUser = () => {
 
         // Reset form after success
         setTimeout(() => {
-          setForm({
-            userName: "",
-            password: "",
-            userType: "",
-            userMobile: "",
-            userEmail: "",
-          });
+          setForm(
+            {
+              userName: "",
+              password: "",
+              userType: "",
+              userMobile: "",
+              userEmail: "",
+            },
+            1000
+          );
           setSuccess("");
-          // Optionally redirect to users list
-          // navigate("/users");
+          navigate("/login");
         }, 2000);
       } else {
         setErrors({ general: res.message || "Failed to create user" });

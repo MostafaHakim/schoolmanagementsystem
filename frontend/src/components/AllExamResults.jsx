@@ -307,6 +307,7 @@ const AllExamResults = () => {
             border-collapse: collapse;
             margin: 2px 0;
             page-break-inside: avoid;
+            text-transform: capitalize;
           }
           .student-details td {
             padding: 2px 2px;
@@ -316,6 +317,7 @@ const AllExamResults = () => {
             font-weight: bold;
             background: #f0f0f0;
             width: 25%;
+            
           }
           .marks-table {
             width: 100%;
@@ -526,7 +528,9 @@ const AllExamResults = () => {
                     ${displayExams
                       .map(
                         (exam) => `
-                      <th colspan="4" class="exam-header">${exam.examName}</th>
+                      <th colspan="4" class="exam-header">${
+                        exam.examName + " " + sessionName
+                      }</th>
                     `
                       )
                       .join("")}
