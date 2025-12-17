@@ -3,7 +3,6 @@ import { FaBell, FaUserCircle, FaBars } from "react-icons/fa";
 
 const Navbar = ({ sessionName, pageTitle, sidebarOpen, onToggleSidebar }) => {
   const user = JSON.parse(localStorage.getItem("user"));
-  console.log(user?.userName, user?.userType);
 
   return (
     <nav className="bg-white shadow-xs border-b border-gray-200 sticky">

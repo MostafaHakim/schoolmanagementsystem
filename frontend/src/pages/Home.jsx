@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   CalendarDays,
   Building2,
@@ -16,6 +16,11 @@ import {
 } from "lucide-react";
 
 const Home = () => {
+  const userAvailable = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+  useEffect(() => {
+    !userAvailable ? navigate("/login") : navigate("/home");
+  }, []);
   const [sessions, setSessions] = useState([]);
   const [newSession, setNewSession] = useState("");
   const [loading, setLoading] = useState(false);
