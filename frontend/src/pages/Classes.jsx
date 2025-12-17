@@ -5,6 +5,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 const Classes = () => {
   const [classes, setClasses] = useState([]);
   const [className, setClassName] = useState("");
+  const [msg, setMag] = useState("");
   const { sessionName } = useParams();
   useEffect(() => {
     fetchClass();
@@ -30,18 +31,37 @@ const Classes = () => {
 
   const addClass = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/classes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ className, sessionName }),
-      });
-      setClassName("");
-      if (!response.ok) throw new Error("Failed to add class");
+      if (!className.trim()) {
+        setMag("Class name is required");
+        setTimeout(() => setMag(""), 3000);
+        return;
+      }
+
+      const newClass = className.trim().toLowerCase();
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/classes?sessionName=${sessionName}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ className: newClass }),
+        }
+      );
+
       const data = await response.json();
-      console.log("Class added:", data);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to add class");
+      }
+
+      setClassName("");
       fetchClass();
+
+      setMag(data.message);
+      setTimeout(() => setMag(""), 3000);
     } catch (error) {
-      console.error("Error:", error);
+      setMag(error.message);
+      setTimeout(() => setMag(""), 3000);
     }
   };
 
@@ -66,6 +86,14 @@ const Classes = () => {
     <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg mt-8">
       <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
         <h2 className="text-3xl font-bold text-gray-800">Classes</h2>
+        <h2
+          className={`${
+            msg &&
+            "text-xl text-red-500 font-bold px-8 py-4 rounded-full bg-green-500/50 border border-green-500"
+          }`}
+        >
+          {msg && msg}
+        </h2>
         <div className="flex w-full md:w-auto">
           <input
             type="text"

@@ -143,7 +143,6 @@ const Display = () => {
       student.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.studentClass.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  console.log(events);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Main Content */}

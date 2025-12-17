@@ -2,14 +2,28 @@ const Classes = require("../model/classModel");
 
 const createNewClass = async (req, res) => {
   try {
-    const createClass = new Classes(req.body);
+    const { className } = req.body;
+    const { sessionName } = req.query;
+    const isExist = await Classes.findOne({ sessionName, className });
+    if (isExist) {
+      return res.status(400).json({
+        message: "Class Already exist",
+      });
+    }
+    const createClass = new Classes({ sessionName, className });
     const saveClass = await createClass.save();
     if (!saveClass) {
       return res.status(400).json({ message: "Something Wrong", error });
     }
-    res.status(201).json(saveClass);
+    res.status(201).json({
+      message: "Class Created",
+      data: saveClass,
+    });
   } catch (error) {
     console.error(error);
+    res.status(500).json({
+      message: "Server Error",
+    });
   }
 };
 
